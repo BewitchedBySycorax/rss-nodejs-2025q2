@@ -1,15 +1,13 @@
 // TODO:
-// In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
-// In case of error during execution of operation Operation failed message should be shown and user should be able to enter another command (e.g. attempt to perform an operation on a non-existent file or work on a non-existent path should result in the operation fail)
-// User can't go upper than root directory (e.g. on Windows it's current local drive root). If user tries to do so, current working directory doesn't change
+// ! In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+// ! In case of error during execution of operation Operation failed message should be shown and user should be able to enter another command (e.g. attempt to perform an operation on a non-existent file or work on a non-existent path should result in the operation fail)
+// ! User can't go upper than root directory (e.g. on Windows it's current local drive root). If user tries to do so, current working directory doesn't change
 //
-// ! 0. REFACTOR TO RL
-// 1. Codebase is separated (at least 7 modules)
-// 2. README.md
+// ? 1. Codebase is separated (at least 7 modules)
+// ? 2. README.md
 //    The program is started by npm-script start in following way: npm run start -- --username=your_username
-// 3. Refactor SWITCH/CASE to corresponding maps
-// 4. Print after start some help for commands description (maybe 'help' command and message previously?)
-//    By default program should prompt user in console to print commands and wait for results
+// ? 3. Refactor SWITCH/CASE to corresponding maps
+// ??? 4. Print after start some help for commands description (maybe 'help' command and message previously?)
 // TODO:
 
 /**
@@ -22,6 +20,8 @@
  *    Compress and decompress files
  */
 
+import readline from 'node:readline';
+
 import { getCwd, printCwd } from './os/index.js';
 import {
   exitProgram,
@@ -32,6 +32,11 @@ import {
 /**
  * 0. Preliminary
  */
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
 const username = getUsername();
 const cwd = getCwd(); // 4. Look at the function implementation
 
@@ -39,7 +44,7 @@ const cwd = getCwd(); // 4. Look at the function implementation
  * 2. After program work finished (ctrl + c pressed or user sent .exit command into console) the program
  *    displays the following text in the console: 'Thank you for using File Manager, Username, goodbye!'
  */
-process.on('SIGINT', () => exitProgram(username, 0));
+rl.on('close', () => exitProgram(username, 0));
 
 /**
  * 1. After starting the program displays the following text in the console
@@ -51,18 +56,21 @@ printHello(username);
 /**
  * 3. At the start of the program and after each end of input/operation current working directory
  *    should be printed in following way: 'You are currently in path_to_working_directory'
+ * 
+ * 4. Starting working directory is current user's home directory (for example, on Windows it's something like system_drive/Users/Username)
  */
 printCwd(cwd);
 
-// TODO:
 /**
  * 5. By default program should prompt user in console to print commands and wait for results
  */
-process.stdin.on('data', (chunk) => {
+rl.prompt();
+
+rl.on('line', (line) => {
   /**
    * 9. List of operations and their syntax:
    */
-  switch (`${chunk}`.trim()) {
+  switch (line.trim()) { // TODO: а нужен ли вообще .trim() ?
     /**
      * 2. After program work finished (ctrl + c pressed or user sent .exit command into console) the program
      *    displays the following text in the console: 'Thank you for using File Manager, Username, goodbye!'
@@ -250,6 +258,13 @@ process.stdin.on('data', (chunk) => {
   /**
    * 3. At the start of the program and after each end of input/operation current working directory
    *    should be printed in following way: 'You are currently in path_to_working_directory'
+   * 
+   * 4. Starting working directory is current user's home directory (for example, on Windows it's something like system_drive/Users/Username)
    */
   printCwd(cwd);
+
+  /**
+   * 5. By default program should prompt user in console to print commands and wait for results
+   */
+  rl.prompt();
 });
