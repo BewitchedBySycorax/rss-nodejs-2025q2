@@ -18,17 +18,19 @@ const __dirname = pathDirname(__filename);
 const filePath = pathResolve(__dirname, 'files', 'fileToCalculateHashFor.txt');
 
 const calculateHash = async () => {
-    try {
-        const fileData = await fsPromisesReadFile(filePath);
+  try {
+    const fileData = await fsPromisesReadFile(filePath);
 
-        const hash = cryptoCreateHash('sha256');
-        hash.update(fileData);
-        const hex = hash.digest('hex');
-    
-        process.stdout.write(hex + EOL);
-    } catch (e) {
-        process.stderr.write(e.message + EOL);
-    }
+    const hash = cryptoCreateHash('sha256');
+    hash.update(fileData);
+    const hex = hash.digest('hex');
+
+    process.stdout.write(hex + EOL);
+  } catch (e) {
+    process.stderr.write(e.message + EOL);
+  }
 };
 
-await calculateHash();
+export default {
+  calculateHash
+}

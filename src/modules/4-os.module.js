@@ -10,7 +10,7 @@ const printCwd = (cwd) => {
   process.stdout.write(`You are currently in ${cwd}${EOL}`);
 }
 
-export {
+export default {
   getCwd,
   printCwd
 }
