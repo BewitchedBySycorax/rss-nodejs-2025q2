@@ -1,29 +1,14 @@
-import { resolve as pathResolve } from 'node:path';
 import { readdir as fsPromisesReaddir } from 'node:fs/promises';
 
 import { pathResolveCustom } from '../utils/pathResolveCustom.util.js';
 
-const up = () => {
+/**
+ * 8. User can't go upper than root directory (e.g. on Windows it's current local drive root).
+ *    If user tries to do so, current working directory doesn't change
+ */
+const changeDir = (cwd, changeDirPath = '../') => {
   try {
-    process.chdir('../');
-    return process.cwd();
-  } catch {
-    throw new Error('Operation failed');
-  }
-}
-
-const cd = (cwd, changeDirPath) => {
-  try {
-    // console.log(17, cwd);
-    // console.log(18, changeDirPath);
-
-    // const changeDirPath = pathResolve(cwd, changeDirPath);
-
-    // console.log(22, changeDirPath);
-
     const changeDirPathNormalized = pathResolveCustom(cwd, changeDirPath);
-
-    console.log(26, changeDirPathNormalized);
     process.chdir(changeDirPathNormalized);
 
     return changeDirPathNormalized;
@@ -61,7 +46,6 @@ const ls = async (cwd) => {
 }
 
 export default {
-  up,
-  cd,
+  changeDir,
   ls
 }

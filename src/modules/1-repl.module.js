@@ -1,7 +1,6 @@
 // TODO:
 // ! 6 In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
 // ! 7 In case of error during execution of operation Operation failed message should be shown and user should be able to enter another command (e.g. attempt to perform an operation on a non-existent file or work on a non-existent path should result in the operation fail)
-// ! 8 User can't go upper than root directory (e.g. on Windows it's current local drive root). If user tries to do so, current working directory doesn't change
 
 // ? README.md
 //    The program is started by npm-script start in following way: npm run start -- --username=your_username
@@ -86,7 +85,16 @@ const start = () => {
            * 
            *        up
            */
-          cwd = nwdModule.up();
+
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length) {
+            throw new Error('Invalid input');
+          }
+
+          // cwd = nwdModule.up(cwd);
+          cwd = nwdModule.changeDir(cwd);
           break;
         case 'cd':
           /**
@@ -102,7 +110,8 @@ const start = () => {
             throw new Error('Invalid input');
           }
 
-          cwd = nwdModule.cd(cwd, args[0]);
+          // cwd = nwdModule.cd(cwd, args[0]);
+          cwd = nwdModule.changeDir(cwd, args[0]);
           break;
         case 'ls':
           /**
