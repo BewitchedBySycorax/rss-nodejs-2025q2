@@ -1,13 +1,16 @@
 {
   "name": "2-file-manager",
   "version": "1.0.0",
+  "description": "File Manager application",
+  "engines": {
+    "node": ">=22.14.0"
+  },
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node src/index.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "author": "Aleksei V. <al.voitovskii@gmail.com>",
+  "license": "ISC"
 }
