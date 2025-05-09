@@ -4,7 +4,7 @@ import {
   createWriteStream as fsCreateWriteStream
 } from 'node:fs';
 import {
-  // writeFile as fsPromisesWriteFile,
+  writeFile as fsPromisesWriteFile,
   mkdir as fsPromisesMkdir,
   rename as fsPromisesRename,
   rm as fsPromisesRm,
@@ -12,17 +12,17 @@ import {
 } from 'node:fs/promises';
 import { sep as pathSeparator } from 'node:path';
 
-import { pathResolveCustom } from '../utils/pathResolveCustom.util.js';
+import utilsModule from './7-utils.module.js';
 
 const readFileByStream = async (cwd, filePath) => {
   return await new Promise((resolve, reject) => {
-    const targetFilePath = pathResolveCustom(cwd, filePath);
+    const targetFilePath = utilsModule.pathResolveCustom(cwd, filePath);
     const streamReader = fsCreateReadStream(targetFilePath);
 
+    process.stdout.write(EOL);
     streamReader.pipe(process.stdout);
 
     streamReader.on('error', (_e) => {
-      process.stderr.write(`${_e.message}${EOL}`);
       reject(new Error('Operation failed'));
     });
 
@@ -36,7 +36,7 @@ const readFileByStream = async (cwd, filePath) => {
 const createFileInCwdByStream = async (cwd, fileName) => {
   checkIfFileNameIsProper(fileName);
 
-  const targetFilePath = `${cwd}${pathSeparator}${fileName}`;
+  const targetFilePath = utilsModule.pathResolveCustom(cwd, fileName);
   const targetFileExists = await checkIfFileExists(targetFilePath);
 
   if (targetFileExists) {
@@ -57,39 +57,39 @@ const createFileInCwdByStream = async (cwd, fileName) => {
     streamWriter.end();
   });
 }
-
-// const createFileInCwd = async (cwd, fileName) => {
-//   try {
-//     checkIfFileNameIsProper(fileName);
-
-//     await fsPromisesWriteFile(
-//       `${cwd}${pathSeparator}${fileName}`,
-//       '',
-//       {
-//         encoding: 'utf-8',
-//         flag: 'wx'
-//       }
-//     );
-//   } catch (e) {
-//     throw new Error('Operation failed');
-//   }
-// };
-
-const createDirInCwd = async (cwd, dirName) => {
+const _createFileInCwd = async (cwd, fileName) => {
   try {
-    await fsPromisesMkdir(`${cwd}${pathSeparator}${dirName}`, { recursive: true });
+    checkIfFileNameIsProper(fileName);
+
+    await fsPromisesWriteFile(
+      `${cwd}${pathSeparator}${fileName}`,
+      '',
+      {
+        encoding: 'utf-8',
+        flag: 'wx'
+      }
+    );
   } catch (e) {
     throw new Error('Operation failed');
   }
 };
 
-const renameFile = async (cwd, sourceFilePath, targetFilePath) => {
+const createDirInCwd = async (cwd, dirName) => {
+  try {
+    const targetDirPath = utilsModule.pathResolveCustom(cwd, dirName);
+    await fsPromisesMkdir(targetDirPath, { recursive: true });
+  } catch (e) {
+    throw new Error('Operation failed');
+  }
+};
+
+const _renameFile = async (cwd, sourceFilePath, targetFilePath) => {
   try {
     checkIfFileNameIsProper(sourceFilePath.split('/')?.at(-1));
     checkIfFileNameIsProper(targetFilePath.split('/')?.at(-1));
 
-    const srcFilePath = pathResolveCustom(cwd, sourceFilePath);
-    const destFilePath = pathResolveCustom(cwd, targetFilePath);
+    const srcFilePath = utilsModule.pathResolveCustom(cwd, sourceFilePath);
+    const destFilePath = utilsModule.pathResolveCustom(cwd, targetFilePath);
 
     await fsPromisesRename(srcFilePath, destFilePath);
   } catch (e) {
@@ -99,8 +99,8 @@ const renameFile = async (cwd, sourceFilePath, targetFilePath) => {
 
 const copyFileByStream = async (cwd, sourceFilePath, targetFilePath) => {
   return await new Promise((resolve, reject) => {
-    const srcFilePath = pathResolveCustom(cwd, sourceFilePath);
-    const destFilePath = pathResolveCustom(cwd, targetFilePath);
+    const srcFilePath = utilsModule.pathResolveCustom(cwd, sourceFilePath);
+    const destFilePath = utilsModule.pathResolveCustom(cwd, targetFilePath);
 
     const streamReader = fsCreateReadStream(srcFilePath);
     const streamWriter = fsCreateWriteStream(destFilePath);
@@ -123,19 +123,21 @@ const copyFileByStream = async (cwd, sourceFilePath, targetFilePath) => {
 
 const moveFileByStream = async (cwd, sourceFilePath, targetFilePath) => {
   try {
-    await copyFileByStream(cwd, sourceFilePath, targetFilePath);
-    await deleteFile(sourceFilePath);
+    if (sourceFilePath !== targetFilePath) {
+      await copyFileByStream(cwd, sourceFilePath, targetFilePath);
+      await deleteFile(cwd, sourceFilePath);
+    }
   } catch (e) {
-    throw new Error('FS operation failed');
+    throw new Error('Operation failed');
   }
 };
 
-const deleteFile = async (filePath) => {
+const deleteFile = async (cwd, filePath) => {
   try {
-    const targetFilePath = pathResolveCustom(cwd, filePath);
+    const targetFilePath = utilsModule.pathResolveCustom(cwd, filePath);
     await fsPromisesRm(targetFilePath);
   } catch (e) {
-    throw new Error('FS operation failed');
+    throw new Error('Operation feailed');
   }
 };
 
@@ -176,10 +178,10 @@ const checkIfFileExists = async (filePath) => {
 
 export default {
   readFileByStream,
+  // _createFileInCwd,
   createFileInCwdByStream,
-  // createFileInCwd,
   createDirInCwd,
-  renameFile,
+  // _renameFile,
   copyFileByStream,
   moveFileByStream,
   deleteFile

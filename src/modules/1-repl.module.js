@@ -6,7 +6,7 @@ import filesModule from './3-files.module.js';
 import osModule from './4-os.module.js';
 import hashModule from './5-hash.module.js';
 import zipModule from './6-zip.module.js';
-import userModule from './7-user.module.js';
+import utilsModule from './7-utils.module.js';
 
 /**
  * 0. Preliminary
@@ -17,7 +17,7 @@ const rl = readline.createInterface({
 });
 
 const start = () => {
-  const username = userModule.getUsername();
+  const cliUsername = utilsModule.getCliUsername();
   let cwd = osModule.getCwd()(); // 4. Look at the function implementation
 
   /**
@@ -25,7 +25,7 @@ const start = () => {
    *    displays the following text in the console: 'Thank you for using File Manager, Username, goodbye!'
    */
   rl.on('close', () => {
-    process.stdout.write(`${EOL}Thank you for using File Manager, ${username}, goodbye!${EOL}`);
+    utilsModule.printToConsole(`Thank you for using File Manager, ${cliUsername}, goodbye!`);
     process.exit(0);
   });
 
@@ -34,7 +34,7 @@ const start = () => {
    *    (Username is equal to value that was passed on application start in --username CLI argument):
    *    'Welcome to the File Manager, Username!'
    */
-  userModule.printHello(username);
+  utilsModule.printToConsole(`Welcome to the File Manager, ${cliUsername}!`);
 
   /**
    * 3. At the start of the program and after each end of input/operation current working directory
@@ -42,7 +42,7 @@ const start = () => {
    * 
    * 4. Starting working directory is current user's home directory (for example, on Windows it's something like system_drive/Users/Username)
    */
-  osModule.printCwd(cwd);
+  utilsModule.printToConsole(`You are currently in ${cwd}`);
 
   /**
    * 5. By default program should prompt user in console to print commands and wait for results
@@ -83,7 +83,6 @@ const start = () => {
             throw new Error('Invalid input');
           }
 
-          // cwd = nwdModule.up(cwd);
           cwd = nwdModule.changeDir(cwd);
           break;
         case 'cd':
@@ -100,7 +99,6 @@ const start = () => {
             throw new Error('Invalid input');
           }
 
-          // cwd = nwdModule.cd(cwd, args[0]);
           cwd = nwdModule.changeDir(cwd, args[0]);
           break;
         case 'ls':
@@ -158,7 +156,7 @@ const start = () => {
             throw new Error('Invalid input');
           }
 
-          // await filesModule.createFileInCwd(cwd, args[0]);
+          // await filesModule._createFileInCwd(cwd, args[0]);
           await filesModule.createFileInCwdByStream(cwd, args[0]);
           break;
         case 'mkdir':
@@ -191,7 +189,12 @@ const start = () => {
             throw new Error('Invalid input');
           }
 
-          await filesModule.renameFile(cwd, args[0], args[1]);
+          /** 
+           * NOTE: this operation is actually the same as mv, so filesModule.moveFileByStream() is in use 
+           *        Nevertheless, there is an implementation of _renameFile() in 3-files.module.js
+           */
+          // await filesModule._renameFile(cwd, args[0], args[1]);
+          await filesModule.moveFileByStream(cwd, args[0], args[1]);
           break;
         case 'cp':
           /**
@@ -261,7 +264,8 @@ const start = () => {
              * 
              *        os --EOL
              */
-            osModule.getEol();
+            const osEol = osModule.getEol();
+            utilsModule.printToConsole(JSON.stringify(osEol));
 
           } else if (arg === '--cpus') {
             /**
@@ -269,7 +273,8 @@ const start = () => {
              * 
              *        os --cpus
              */
-            osModule.getCpusInfo();
+            const cpusInfo = osModule.getCpusInfo();
+            utilsModule.printToConsole(JSON.stringify(cpusInfo, null, 2));
 
           } else if (arg === '--homedir') {
             /**
@@ -277,7 +282,8 @@ const start = () => {
              * 
              *        os --homedir
              */
-            osModule.printHomedir();
+            const homeDir = osModule.getHomedir();
+            utilsModule.printToConsole(homeDir);
 
           } else if (arg === '--username') {
             /**
@@ -285,7 +291,8 @@ const start = () => {
              * 
              *        os --username
              */
-            osModule.getUsername();
+            const osUsername = osModule.getUsername();
+            utilsModule.printToConsole(osUsername);
 
           } else if (arg === '--architecture') {
             /**
@@ -293,7 +300,8 @@ const start = () => {
              * 
              *        os --architecture
              */
-            osModule.getArch();
+            const osArch = osModule.getArch();
+            utilsModule.printToConsole(osArch);
 
           } else {
             throw new Error('Invalid input');
@@ -318,8 +326,8 @@ const start = () => {
             throw new Error('Invalid input');
           }
 
-          // TODO:
-          // hashModule.calculateHash();
+          const fileHash = await hashModule.calculateHash(cwd, args[0]);
+          utilsModule.printToConsole(fileHash);
           break;
 
         /**
@@ -358,13 +366,13 @@ const start = () => {
        * 
        * 4. Starting working directory is current user's home directory (for example, on Windows it's something like system_drive/Users/Username)
        */
-      osModule.printCwd(cwd);
+      utilsModule.printToConsole(`You are currently in ${cwd}`);
 
       /**
        * 5. By default program should prompt user in console to print commands and wait for results
        */
     } catch (e) {
-      process.stderr.write(`${e.message}${EOL}`);
+      utilsModule.printToConsole(`${e.message}`, true);
     } finally {
       rl.prompt();
     }

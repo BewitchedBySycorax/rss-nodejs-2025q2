@@ -1,6 +1,6 @@
 import { readdir as fsPromisesReaddir } from 'node:fs/promises';
 
-import { pathResolveCustom } from '../utils/pathResolveCustom.util.js';
+import utilsModule from './7-utils.module.js';
 
 /**
  * 8. User can't go upper than root directory (e.g. on Windows it's current local drive root).
@@ -8,7 +8,7 @@ import { pathResolveCustom } from '../utils/pathResolveCustom.util.js';
  */
 const changeDir = (cwd, changeDirPath = '../') => {
   try {
-    const changeDirPathNormalized = pathResolveCustom(cwd, changeDirPath);
+    const changeDirPathNormalized = utilsModule.pathResolveCustom(cwd, changeDirPath);
     process.chdir(changeDirPathNormalized);
 
     return changeDirPathNormalized;
