@@ -34,7 +34,6 @@ const printHomedir = () => {
 };
 
 const getUsername = () => {
-  // os --username
   const { username } = userInfo();
   process.stdout.write(`${EOL}${username}${EOL}`);
 };

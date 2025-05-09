@@ -158,7 +158,8 @@ const start = () => {
             throw new Error('Invalid input');
           }
 
-          await filesModule.createFileInCwd(cwd, args[0]);
+          // await filesModule.createFileInCwd(cwd, args[0]);
+          await filesModule.createFileInCwdByStream(cwd, args[0]);
           break;
         case 'mkdir':
           /**
@@ -310,7 +311,15 @@ const start = () => {
            *        hash path_to_file
            */
 
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 1) {
+            throw new Error('Invalid input');
+          }
+
           // TODO:
+          // hashModule.calculateHash();
           break;
 
         /**

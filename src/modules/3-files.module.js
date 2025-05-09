@@ -4,10 +4,11 @@ import {
   createWriteStream as fsCreateWriteStream
 } from 'node:fs';
 import {
-  writeFile as fsPromisesWriteFile,
+  // writeFile as fsPromisesWriteFile,
   mkdir as fsPromisesMkdir,
   rename as fsPromisesRename,
-  rm as fsPromisesRm
+  rm as fsPromisesRm,
+  stat as fsPromisesStat
 } from 'node:fs/promises';
 import { sep as pathSeparator } from 'node:path';
 
@@ -32,22 +33,47 @@ const readFileByStream = async (cwd, filePath) => {
   });
 };
 
-const createFileInCwd = async (cwd, fileName) => {
-  try {
-    checkIfFileNameIsProper(fileName);
+const createFileInCwdByStream = async (cwd, fileName) => {
+  checkIfFileNameIsProper(fileName);
 
-    await fsPromisesWriteFile(
-      `${cwd}${pathSeparator}${fileName}`,
-      '',
-      {
-        encoding: 'utf-8',
-        flag: 'wx'
-      }
-    );
-  } catch (e) {
+  const targetFilePath = `${cwd}${pathSeparator}${fileName}`;
+  const targetFileExists = await checkIfFileExists(targetFilePath);
+
+  if (targetFileExists) {
     throw new Error('Operation failed');
   }
-};
+
+  return await new Promise((resolve, reject) => {
+    const streamWriter = fsCreateWriteStream(targetFilePath, { flag: 'wx' });
+
+    streamWriter.on('error', (_e) => {
+      reject(new Error('Operation failed'));
+    });
+
+    streamWriter.on('finish', () => {
+      resolve();
+    });
+
+    streamWriter.end();
+  });
+}
+
+// const createFileInCwd = async (cwd, fileName) => {
+//   try {
+//     checkIfFileNameIsProper(fileName);
+
+//     await fsPromisesWriteFile(
+//       `${cwd}${pathSeparator}${fileName}`,
+//       '',
+//       {
+//         encoding: 'utf-8',
+//         flag: 'wx'
+//       }
+//     );
+//   } catch (e) {
+//     throw new Error('Operation failed');
+//   }
+// };
 
 const createDirInCwd = async (cwd, dirName) => {
   try {
@@ -131,9 +157,27 @@ const checkIfFileNameIsProper = (fileName) => {
   }
 };
 
+const checkIfFileExists = async (filePath) => {
+  let fileExists = false;
+
+  try {
+    const stats = await fsPromisesStat(filePath);
+    if (stats.isFile()) {
+      fileExists = true;
+    }
+  } catch (e) {
+    if (e.code !== 'ENOENT') {
+      throw e;
+    }
+  } finally {
+    return fileExists;
+  }
+};
+
 export default {
   readFileByStream,
-  createFileInCwd,
+  createFileInCwdByStream,
+  // createFileInCwd,
   createDirInCwd,
   renameFile,
   copyFileByStream,
