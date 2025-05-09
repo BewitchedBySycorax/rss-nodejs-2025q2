@@ -1,6 +1,5 @@
 import { createHash as cryptoCreateHash } from 'node:crypto';
 import { createReadStream as fsCreateReadStream } from 'node:fs';
-import { EOL } from 'node:os';
 
 import utilsModule from './7-utils.module.js';
 

@@ -5,7 +5,7 @@ import nwdModule from './2-nwd.module.js'
 import filesModule from './3-files.module.js';
 import osModule from './4-os.module.js';
 import hashModule from './5-hash.module.js';
-import zipModule from './6-zip.module.js';
+import archiveModule from './6-archive.module.js';
 import utilsModule from './7-utils.module.js';
 
 /**
@@ -340,7 +340,14 @@ const start = () => {
            *        compress path_to_file path_to_destination
            */
 
-          // TODO:
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 2) {
+            throw new Error('Invalid input');
+          }
+
+          await archiveModule.compressFileUsingBrotli(cwd, args[0], args[1]);
           break;
         case 'decompress':
           /**
@@ -351,7 +358,14 @@ const start = () => {
            * NB! After decompressing of previously compressed file result should not differ with originally compressed file
            */
 
-          // TODO:
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 2) {
+            throw new Error('Invalid input');
+          }
+
+          await archiveModule.decompressFileUsingBrotli(cwd, args[0], args[1]);
           break;
 
         //
