@@ -10,7 +10,6 @@ import {
   rm as fsPromisesRm,
   stat as fsPromisesStat
 } from 'node:fs/promises';
-import { sep as pathSeparator } from 'node:path';
 
 import utilsModule from './7-utils.module.js';
 
@@ -57,18 +56,12 @@ const createFileInCwdByStream = async (cwd, fileName) => {
     streamWriter.end();
   });
 }
+
 const _createFileInCwd = async (cwd, fileName) => {
   try {
     checkIfFileNameIsProper(fileName);
-
-    await fsPromisesWriteFile(
-      `${cwd}${pathSeparator}${fileName}`,
-      '',
-      {
-        encoding: 'utf-8',
-        flag: 'wx'
-      }
-    );
+    const targetFilePath = utilsModule.pathResolveCustom(cwd, fileName);
+    await fsPromisesWriteFile(targetFilePath, '', { encoding: 'utf-8', flag: 'wx' });
   } catch (e) {
     throw new Error('Operation failed');
   }
