@@ -3,11 +3,8 @@ import { homedir } from 'node:os';
 import { join as pathJoin, resolve as pathResolve } from 'node:path';
 
 const printToConsole = (data, isError = false) => {
-  if (!isError) {
-    process.stdout.write(`${EOL}${data}${EOL}`);
-  } else {
-    process.stderr.write(`${EOL}${data}${EOL}`);
-  }
+  const processOut = !isError ? process.stdout : process.stderr;
+  processOut.write(`${EOL}${data}${EOL}`);
 }
 
 const getCliUsername = () => {

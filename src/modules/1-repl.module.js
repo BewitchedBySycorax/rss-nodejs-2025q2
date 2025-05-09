@@ -372,7 +372,7 @@ const start = () => {
        * 5. By default program should prompt user in console to print commands and wait for results
        */
     } catch (e) {
-      utilsModule.printToConsole(`${e.message}`, true);
+      utilsModule.printToConsole(e.message, true);
     } finally {
       rl.prompt();
     }
