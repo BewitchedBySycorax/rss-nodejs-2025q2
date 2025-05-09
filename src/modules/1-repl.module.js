@@ -1,11 +1,3 @@
-// TODO:
-// ? Error hanlder (7th) module?
-// ? README.md
-//    The program is started by npm-script start in following way: npm run start -- --username=your_username
-// ?? Refactor SWITCH/CASE to corresponding maps
-// ??? Print after start some help for commands description (maybe 'help' command and message previously?)
-// TODO:
-
 import { EOL } from 'node:os';
 import readline from 'node:readline';
 
@@ -252,72 +244,88 @@ const start = () => {
         /**
          * 9.3. Operating system info (prints following information in console)
          */
-        case 'os --EOL':
-          // TODO:
+        case 'os':
           /**
-           * 9.3.1. Get EOL (default system End-Of-Line) and print it to console
-           * 
-           *        os --EOL
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
            */
-          break;
-        case 'os --cpus':
-          // TODO:
-          /**
-           * 9.3.2. Get host machine CPUs info (overall amount of CPUS plus model and clock rate (in GHz) for each of them) and print it to console
-           * 
-           *        os --cpus
-           */
-          break;
-        case 'os --homedir':
-          // TODO:
-          /**
-           * 9.3.3. Get home directory and print it to console
-           * 
-           *        os --homedir
-           */
-          break;
-        case 'os --username':
-          // TODO:
-          /**
-           * 9.3.4. Get current system user name (Do not confuse with the username that is set when the application starts) and print it to console
-           * 
-           *        os --username
-           */
-          break;
-        case 'os --architecture':
-          // TODO:
-          /**
-           * 9.3.5. Get CPU architecture for which Node.js binary has compiled and print it to console
-           * 
-           *        os --architecture
-           */
+          if (args.length !== 1) {
+            throw new Error('Invalid input');
+          }
+
+          const [arg] = args;
+
+          if (arg === '--EOL') {
+            /**
+             * 9.3.1. Get EOL (default system End-Of-Line) and print it to console
+             * 
+             *        os --EOL
+             */
+            osModule.getEol();
+
+          } else if (arg === '--cpus') {
+            /**
+             * 9.3.2. Get host machine CPUs info (overall amount of CPUS plus model and clock rate (in GHz) for each of them) and print it to console
+             * 
+             *        os --cpus
+             */
+            osModule.getCpusInfo();
+
+          } else if (arg === '--homedir') {
+            /**
+             * 9.3.3. Get home directory and print it to console
+             * 
+             *        os --homedir
+             */
+            osModule.printHomedir();
+
+          } else if (arg === '--username') {
+            /**
+             * 9.3.4. Get current system user name (Do not confuse with the username that is set when the application starts) and print it to console
+             * 
+             *        os --username
+             */
+            osModule.getUsername();
+
+          } else if (arg === '--architecture') {
+            /**
+             * 9.3.5. Get CPU architecture for which Node.js binary has compiled and print it to console
+             * 
+             *        os --architecture
+             */
+            osModule.getArch();
+
+          } else {
+            throw new Error('Invalid input');
+          }
+
           break;
 
         /**
          * 9.4. Hash calculation
          */
         case 'hash':
-          // TODO:
           /**
            * 9.4.1. Calculate hash for file and print it into console
            * 
            *        hash path_to_file
            */
+
+          // TODO:
           break;
 
         /**
          * 9.5. Compress and decompress operations
          */
         case 'compress':
-          // TODO:
           /**
            * 9.5.1. Compress file (using Brotli algorithm, should be done using Streams API)
            * 
            *        compress path_to_file path_to_destination
            */
+
+          // TODO:
           break;
         case 'decompress':
-          // TODO:
           /**
            * 9.5.2. Decompress file (using Brotli algorithm, should be done using Streams API)
            * 
@@ -325,11 +333,14 @@ const start = () => {
            * 
            * NB! After decompressing of previously compressed file result should not differ with originally compressed file
            */
+
+          // TODO:
           break;
 
         //
 
         default:
+          throw new Error('Invalid input');
       }
 
       /**
@@ -344,7 +355,6 @@ const start = () => {
        * 5. By default program should prompt user in console to print commands and wait for results
        */
     } catch (e) {
-      console.error(306); // TODO: убрать это
       process.stderr.write(`${e.message}${EOL}`);
     } finally {
       rl.prompt();

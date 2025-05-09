@@ -39,9 +39,7 @@ const ls = async (cwd) => {
 
     console.table(cwdContentSorted);
   } catch (e) {
-    // if (e?.code === 'ENOENT') {
-      throw new Error('Operation failed');
-    // }
+    throw new Error('Operation failed');
   }
 }
 
