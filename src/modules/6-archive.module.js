@@ -10,10 +10,6 @@ import { pipeline } from 'node:stream/promises';
 
 import utilsModule from './7-utils.module.js';
 
-/**
- * NOTE: it's recommended to add common Brotli archive file extension when compressing to source file path in terminal: .br
- *       EXAMPLE: compress <filename>.<fileext> <filename>.<fileext>.<br>
- */
 const compressFileUsingBrotli = async (cwd, sourceFilePath, targetFilePath) => {
   try {
     const srcFilePath = utilsModule.pathResolveCustom(cwd, sourceFilePath);

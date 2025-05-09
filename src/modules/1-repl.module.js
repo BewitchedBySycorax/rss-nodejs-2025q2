@@ -346,10 +346,6 @@ const start = () => {
             throw new Error('Invalid input');
           }
 
-          /**
-           * NOTE: it's recommended to add common Brotli archive file extension when compressing to source file path in terminal: .br
-           *       EXAMPLE: compress <filename>.<fileext> <filename>.<fileext>.<br>
-           */
           await archiveModule.compressFileUsingBrotli(cwd, args[0], args[1]);
           break;
         case 'decompress':
