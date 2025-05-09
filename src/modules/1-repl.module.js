@@ -1,7 +1,5 @@
 // TODO:
-// ! 6 In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
-// ! 7 In case of error during execution of operation Operation failed message should be shown and user should be able to enter another command (e.g. attempt to perform an operation on a non-existent file or work on a non-existent path should result in the operation fail)
-
+// ? Error hanlder (7th) module?
 // ? README.md
 //    The program is started by npm-script start in following way: npm run start -- --username=your_username
 // ?? Refactor SWITCH/CASE to corresponding maps
@@ -139,60 +137,116 @@ const start = () => {
          * 9.2. Basic operations with files
          */
         case 'cat':
-          // TODO:
           /**
            * 9.2.1. Read file and print it's content in console (should be done using Readable stream):
            * 
            *        cat path_to_file
            */
+
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 1) {
+            throw new Error('Invalid input');
+          }
+
+          await filesModule.readFileByStream(cwd, args[0]);
           break;
         case 'add':
-          // TODO:
           /**
            * 9.2.2. Create empty file in current working directory:
            * 
            *        add new_file_name
            */
+
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 1) {
+            throw new Error('Invalid input');
+          }
+
+          await filesModule.createFileInCwd(cwd, args[0]);
           break;
         case 'mkdir':
-          // TODO:
           /**
            * 9.2.3. Create new directory in current working directory:
            * 
            *        mkdir new_directory_name
            */
+
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 1) {
+            throw new Error('Invalid input');
+          }
+
+          await filesModule.createDirInCwd(cwd, args[0]);
           break;
         case 'rn':
-          // TODO:
           /**
            * 9.2.4. Rename file (content should remain unchanged):
            * 
            *        rn path_to_file new_filename
            */
+
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 2) {
+            throw new Error('Invalid input');
+          }
+
+          await filesModule.renameFile(cwd, args[0], args[1]);
           break;
         case 'cp':
-          // TODO:
           /**
            * 9.2.5. Copy file (should be done using Readable and Writable streams):
            * 
            *        cp path_to_file path_to_new_directory
            */
+
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 2) {
+            throw new Error('Invalid input');
+          }
+
+          await filesModule.copyFileByStream(cwd, args[0], args[1]);
           break;
         case 'mv':
-          // TODO:
           /**
            * 9.2.6. Move file (same as copy but initial file is deleted, copying part should be done using Readable and Writable streams):
            * 
            *        mv path_to_file path_to_new_directory
            */
+
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 2) {
+            throw new Error('Invalid input');
+          }
+
+          await filesModule.moveFileByStream(cwd, args[0], args[1]);
           break;
         case 'rm':
-          // TODO:
           /**
            * 9.2.7. Delete file:
            * 
            *        rm path_to_file
            */
+
+          /**
+           * 6. In case of unknown operation or invalid input (missing mandatory arguments, wrong data in arguments, etc.) Invalid input message should be shown and user should be able to enter another command
+           */
+          if (args.length !== 1) {
+            throw new Error('Invalid input');
+          }
+
+          await filesModule.deleteFile(cwd, args[0]);
           break;
         
         /**
@@ -290,6 +344,7 @@ const start = () => {
        * 5. By default program should prompt user in console to print commands and wait for results
        */
     } catch (e) {
+      console.error(306); // TODO: убрать это
       process.stderr.write(`${e.message}${EOL}`);
     } finally {
       rl.prompt();

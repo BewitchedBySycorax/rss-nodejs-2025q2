@@ -11,7 +11,6 @@ const printHello = (username) => {
   process.stdout.write(`Welcome to the File Manager, ${username}!${EOL}`)
 }
 
-
 export default {
   getUsername,
   printHello
